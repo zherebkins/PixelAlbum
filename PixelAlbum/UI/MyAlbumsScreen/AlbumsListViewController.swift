@@ -49,3 +49,15 @@ final class AlbumsListViewController: UIViewController {
     }
 }
 
+extension AlbumsListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let selectedAlbum = dataSource.snapshot().itemIdentifiers(inSection: indexPath.section)[indexPath.row]
+        
+        let albumContentVC = UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: String(describing: AlbumContentViewController.self)) as! AlbumContentViewController
+        albumContentVC.photosAlbum = selectedAlbum
+        
+        navigationController?.pushViewController(albumContentVC, animated: true)
+    }
+}
