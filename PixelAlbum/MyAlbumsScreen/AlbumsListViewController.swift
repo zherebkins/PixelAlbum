@@ -36,14 +36,14 @@ final class AlbumsListViewController: UIViewController {
     }
     
     func makeDiffableDataSource() -> UITableViewDiffableDataSource<Int, Album> {
-        .init(tableView: tableView) { tableView, indexPath, album in
+        .init(tableView: tableView) { [viewModel] tableView, indexPath, album in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: AlbumTableViewCell.identifier,
                                                            for: indexPath) as? AlbumTableViewCell
             else {
                 fatalError("Wrong cell type for idetifier: \(AlbumTableViewCell.identifier)")
             }
             
-            cell.configure(albumName: album.name, photosCount: album.itemsCount)
+            cell.configure(with: album, thumbnailProvider: viewModel)
             return cell
         }
     }

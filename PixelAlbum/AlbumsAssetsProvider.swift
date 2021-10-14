@@ -11,48 +11,60 @@ import Photos
 struct PhotoAlbum {
     let name: String
     let itemsCount: Int
-    let thumbnailId: String
+    let thumbnailAsset: PHAsset?
 }
 
 final class AlbumsAssetsProvider {
+    func getPhotoAlbums() -> [PhotoAlbum] {
+        return fetchAssetsCollections()
+            .map { assetsCollection -> PhotoAlbum in
+                let photoAssets = fetchPhotoAssets(in: assetsCollection)
+                return PhotoAlbum(name: assetsCollection.localizedTitle!,
+                                  itemsCount: photoAssets.count,
+                                  thumbnailAsset: photoAssets.first)
+            }
+    }
     
-    func allPhotosCount() -> Int {
-        let photosPredicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)")
-        
-        let options = PHFetchOptions()
-        options.predicate = photosPredicate
-        
-        let allPhotosAssets = PHAsset.fetchAssets(with: options)
-        return allPhotosAssets.count
+    func allPhotosInfo() -> (count: Int, lastAsset: PHAsset?) {
+        let allPhotosAssets = PHAsset.fetchAssets(with: Self.photoAssetsFetchOptions)
+        return (allPhotosAssets.count, allPhotosAssets.firstObject)
     }
 
-    func getAssetsCollections() -> [PHAssetCollection] {
+    
+    // MARK: - Private helpers
+    
+    private func fetchAssetsCollections() -> [PHAssetCollection] {
         var assetCollections = [PHAssetCollection]()
 
-        let albums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        
-        albums.enumerateObjects { collection, index, stop in
+        let result = PHAssetCollection.fetchAssetCollections(with: .album,
+                                                             subtype: .any,
+                                                             options: nil)
+        result.enumerateObjects { collection, _, _ in
             assetCollections.append(collection)
         }
         
         return assetCollections
     }
     
-    func getPhotoAlbums() -> [PhotoAlbum] {
-        let fetchOptions = PHFetchOptions()
+    private func fetchPhotoAssets(in collection: PHAssetCollection) -> [PHAsset] {
+        let assetsResult = PHAsset.fetchAssets(in: collection, options: Self.photoAssetsFetchOptions)
         
-        var result = [PhotoAlbum]()
-        
-        let assetsCollections = getAssetsCollections().map { assetsCollection in
-            let assets = PHAsset.fetchAssets(in: assetsCollections, options: fetchOptions)
-            
-            
-            
-            assets.enumerateObjects { assets, Index, stop in
-                
-            }
+        var assets = [PHAsset]()
+        assetsResult.enumerateObjects { asset, _, _ in
+            assets.append(asset)
         }
         
-        return result
+        return assets
     }
+    
+    // MARK: - Fetch options
+    
+    private static let photoAssetsFetchOptions: PHFetchOptions = {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = photoMediaTypePredicate
+        fetchOptions.sortDescriptors = [NSSortDescriptor(keyPath: \PHAsset.creationDate, ascending: false)]
+        return fetchOptions
+    }()
+    
+    private static let photoMediaTypePredicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)")
 }

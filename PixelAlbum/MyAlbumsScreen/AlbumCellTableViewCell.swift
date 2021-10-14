@@ -12,15 +12,27 @@ final class AlbumTableViewCell: UITableViewCell {
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var itemsCountLabel: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    private var displayingAlbum: Album?
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        displayingAlbum = nil
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func configure(with album: Album, thumbnailProvider: AlbumsListViewModel) {
+        displayingAlbum = album
+        
+        nameLabel.text = album.name
+        itemsCountLabel.text = "\(album.itemsCount)"
+        
+        if let thumbnailId = album.thumbnailId {
+            thumbnailProvider.getThumbnail(for: thumbnailId) { [weak self] image in
+                guard let self = self, self.displayingAlbum?.thumbnailId == thumbnailId else {
+                    return
+                }
+                self.thumbnail.image = image
+            }
+        }
     }
     
     func configure(albumName: String, photosCount: Int) {
