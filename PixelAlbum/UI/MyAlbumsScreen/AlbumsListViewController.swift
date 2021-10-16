@@ -20,13 +20,11 @@ final class AlbumsListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     
     private var viewModel: AlbumsListViewModel!
-    private var dataSource: UITableViewDiffableDataSource<Int, Album>!
-        
+    private var dataSource: UITableViewDiffableDataSource<Int, AlbumCellViewModel>!
     private var subscribtions = [AnyCancellable]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
         dataSource = makeDiffableDataSource()
         configureBindings()
         viewModel.onViewLoaded()
@@ -35,7 +33,7 @@ final class AlbumsListViewController: UIViewController {
     private func configureBindings() {
         viewModel.$albums
             .sink { [unowned self] albums in
-                var snapshot = NSDiffableDataSourceSnapshot<Int, Album>()
+                var snapshot = NSDiffableDataSourceSnapshot<Int, AlbumCellViewModel>()
                 snapshot.appendSections([0])
                 snapshot.appendItems(albums, toSection: 0)
                 dataSource.apply(snapshot)
@@ -43,15 +41,15 @@ final class AlbumsListViewController: UIViewController {
             .store(in: &subscribtions)
     }
     
-    private func makeDiffableDataSource() -> UITableViewDiffableDataSource<Int, Album> {
-        .init(tableView: tableView) { [unowned self] tableView, indexPath, album in
+    private func makeDiffableDataSource() -> UITableViewDiffableDataSource<Int, AlbumCellViewModel> {
+        .init(tableView: tableView) { tableView, indexPath, cellViewModel in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: AlbumTableViewCell.identifier,
                                                            for: indexPath) as? AlbumTableViewCell
             else {
                 fatalError("Wrong cell type for idetifier: \(AlbumTableViewCell.identifier)")
             }
             
-            cell.configure(with: album, thumbnailProvider: self.viewModel)
+            cell.configure(with: cellViewModel)
             return cell
         }
     }

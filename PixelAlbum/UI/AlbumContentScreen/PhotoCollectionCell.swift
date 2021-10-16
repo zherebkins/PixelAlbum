@@ -14,35 +14,30 @@ final class PhotoCollectionCell: UICollectionViewCell {
     @IBOutlet private var modifiedLabel: UILabel!
     
     private var displayingAsset: PHAsset?
+    private var displayingViewModel: PhotoCellViewModel?
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        displayingViewModel?.cancelPreviewFetching()
+        displayingViewModel = nil
+        
         displayingAsset = nil
         image.image = nil
-        rawLabel.isHidden = true
-        modifiedLabel.isHidden = true
     }
     
-    func configure(with asset: PHAsset, thumbnailsProvider: ThumbnailsProvider) {
-        displayingAsset = asset
+    func configure(with viewModel: PhotoCellViewModel) {
+        displayingViewModel = viewModel
         
-        thumbnailsProvider.getPreviewPhoto(for: asset, targetSize: bounds.size) { [weak self] assetImage in
-            guard let self = self, asset.localIdentifier == self.displayingAsset?.localIdentifier else {
+        let info = viewModel.fileInfo
+        rawLabel.isHidden = !info.hasRawFile
+        modifiedLabel.isHidden = !info.isModified
+        
+        viewModel.fetchPreview(targetSize: bounds.size) { [weak self] assetImage in
+            guard let self = self, viewModel.asset.localIdentifier == self.displayingViewModel?.asset.localIdentifier else {
                 return
             }
             self.image.image = assetImage
         }
-        
-        let resources = PHAssetResource.assetResources(for: asset)
-        let isRAW = resources.contains(where: { $0.type == .alternatePhoto})
-        let isModified = resources.contains(where: { $0.type == .adjustmentData })
-        if isRAW {
-            print("RAAAAW")
-        }
-        
-        
-        rawLabel.isHidden = !isRAW
-        modifiedLabel.isHidden = !isModified
     }
     
     static var identifier: String {

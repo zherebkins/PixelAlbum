@@ -11,25 +11,29 @@ import Combine
 
 
 final class AlbumContentViewController: UIViewController {
-    var photosAlbum: PhotoAlbum?
     
-    @IBOutlet var collectionView: UICollectionView!
+    static func instantiate(with viewModel: AlbumContentViewModel) -> AlbumContentViewController {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AlbumContentViewController") as! AlbumContentViewController
+        vc.viewModel = viewModel
+        return vc
+    }
     
-    private var dataSource: UICollectionViewDiffableDataSource<Int, PHAsset>!
-    private var viewModel: AlbumContentViewModel!
-    
-    private var subscribtions = [AnyCancellable]()
+    @IBOutlet private var collectionView: UICollectionView!
     private let flowLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 4
         layout.minimumInteritemSpacing = 4
         return layout
     }()
+    
+    private var dataSource: UICollectionViewDiffableDataSource<Int, PhotoCellViewModel>!
+    private var viewModel: AlbumContentViewModel!
+    
+    private var subscribtions = [AnyCancellable]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel = AlbumContentViewModel(photosAlbum)
-        title = photosAlbum?.name ?? "All Photos"
+        title = viewModel.albumName
         
         collectionView.delegate = self
         collectionView.collectionViewLayout = flowLayout
@@ -39,14 +43,10 @@ final class AlbumContentViewController: UIViewController {
         viewModel.onViewLoaded()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     private func configureBindings() {
         viewModel.$photos
             .sink { [unowned self] photos in
-                var snapshot = NSDiffableDataSourceSnapshot<Int, PHAsset>()
+                var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoCellViewModel>()
                 snapshot.appendSections([0])
                 snapshot.appendItems(photos, toSection: 0)
                 dataSource.apply(snapshot)
@@ -54,16 +54,15 @@ final class AlbumContentViewController: UIViewController {
             .store(in: &subscribtions)
     }
     
-    
-    func makeDiffableDataSource() -> UICollectionViewDiffableDataSource<Int, PHAsset> {
-        .init(collectionView: collectionView) { collectionView, indexPath, asset in
+    private func makeDiffableDataSource() -> UICollectionViewDiffableDataSource<Int, PhotoCellViewModel> {
+        .init(collectionView: collectionView) { collectionView, indexPath, cellViewModel in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionCell.identifier,
                                                                 for: indexPath) as? PhotoCollectionCell
             else {
                 fatalError("Wrong cell type for idetifier: \(PhotoCollectionCell.identifier)")
             }
             
-            cell.configure(with: asset, thumbnailsProvider: ServiceLocator.thumbnailsProvider)
+            cell.configure(with: cellViewModel)
             return cell
         }
     }
@@ -79,5 +78,10 @@ extension AlbumContentViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = width - spacing * (numberOfItemsPerRow + 1)
         let itemDimension = floor(availableWidth / numberOfItemsPerRow)
         return CGSize(width: itemDimension, height: itemDimension)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        viewModel.selectPhoto(at: indexPath.row)
     }
 }

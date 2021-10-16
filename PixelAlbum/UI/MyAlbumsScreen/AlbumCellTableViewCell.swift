@@ -12,26 +12,26 @@ final class AlbumTableViewCell: UITableViewCell {
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var itemsCountLabel: UILabel!
     
-    private var displayingAlbum: Album?
+    private var displayingViewModel: AlbumCellViewModel?
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        displayingAlbum = nil
+        
+        displayingViewModel?.cancelThumbnailFetch()
+        displayingViewModel = nil
     }
     
-    func configure(with album: Album, thumbnailProvider: AlbumsListViewModel) {
-        displayingAlbum = album
+    func configure(with viewModel: AlbumCellViewModel) {
+        displayingViewModel = viewModel
         
-        nameLabel.text = album.name
-        itemsCountLabel.text = "\(album.itemsCount)"
+        nameLabel.text = viewModel.name
+        itemsCountLabel.text = "\(viewModel.itemsCount)"
         
-        if let thumbnailId = album.thumbnailId {
-            thumbnailProvider.getThumbnail(for: thumbnailId) { [weak self] image in
-                guard let self = self, self.displayingAlbum?.thumbnailId == thumbnailId else {
-                    return
-                }
-                self.thumbnail.image = image
+        viewModel.fetchThumbnail { [weak self] image in
+            guard let self = self, self.displayingViewModel == viewModel else {
+                return
             }
+            self.thumbnail.image = image
         }
     }
     

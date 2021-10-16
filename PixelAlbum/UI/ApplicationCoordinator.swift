@@ -12,8 +12,8 @@ import Photos
 
 final class ApplicationCoordinator {
     private enum Services {
-        static let assetsProvider = AlbumsAssetsProvider()
-        static let thumbnailProvider = ThumbnailsProvider()
+        static let assetsProvider = AssetsProvider()
+        static let thumbnailProvider = ThumbnailsProvider(assetsProvider: assetsProvider)
     }
     
     private let window: UIWindow
@@ -25,29 +25,37 @@ final class ApplicationCoordinator {
     
     func start() {
         let navigationController = UINavigationController(rootViewController: makeAlbumsListViewController())
+        navigationController.navigationBar.prefersLargeTitles = true
+        
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         displayingNavigationController = navigationController
     }
     
-    func pushAlbumContentScreen(for assetCollection: PHAssetCollection) {
-        let albumContentVC = UIStoryboard(name: "Main", bundle: nil)
-            .instantiateViewController(withIdentifier: String(describing: AlbumContentViewController.self)) as! AlbumContentViewController
-        
-        albumContentVC.photosAlbum = viewModel.photoAlbum(for: selectedAlbum)
-        
-        navigationController?.pushViewController(albumContentVC, animated: true)
+    private func pushAlbumContentScreen(with album: Album) {
+        let albumContentScreen = makeAlbumContentViewController(for: album)
+        displayingNavigationController?.pushViewController(albumContentScreen, animated: true)
     }
     
-    // MARK: Factory methods
+    // MARK: - Factory methods
     func makeAlbumsListViewController() -> UIViewController {
         let viewModel = AlbumsListViewModel(assetsProvider: Services.assetsProvider,
                                             thumbnailsProvider: Services.thumbnailProvider,
-                                            didSelectAlbumBlock: { [unowned self] in
-            pushAlbumContentScreen(for: $0)
-        })
+                                            didSelectAlbumOutput: { [unowned self] in pushAlbumContentScreen(with: $0) })
         
         let albumsListVC = AlbumsListViewController.instantiate(with: viewModel)
         return albumsListVC
+    }
+    
+    func makeAlbumContentViewController(for album: Album) -> UIViewController {
+        let viewModel = makeAlbumContentViewModel(for: album)
+        return AlbumContentViewController.instantiate(with: viewModel)
+    }
+    
+    func makeAlbumContentViewModel(for album: Album) -> AlbumContentViewModel {
+        return .init(album,
+                     assetsProvider: Services.assetsProvider,
+                     thumbnailsProvider: Services.thumbnailProvider,
+                     didSelectPhotoOutput: { _ in })
     }
 }
