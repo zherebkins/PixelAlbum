@@ -121,7 +121,14 @@ build/
 #     FROM ANSWER: Apple says "don't ignore it"
 #     FROM COMMENTS: Apple is wrong; Apple code is too buggy to trust; there are no known negative side-effects to ignoring Apple's unofficial advice and instead doing the thing that actively fixes bugs in Xcode
 # Up to you, but ... current advice: ignore it.
+*.xcworkspace
+!default.xcworkspace
+xcuserdata
+*.xcuserstate
+*.xcbkptlist
+*.xcworkspacedata
 *.xccheckout
+xcshareddata/WorkspaceSettings.xcsettings
 
 #
 #
@@ -141,7 +148,7 @@ xcuserdata/
 #    or manually install git over the top of the OS X version
 # NB: this is exclusive with OPTION 1 above
 #
-#xcuserdata/**/*
+xcuserdata/**/*
 
 #     (requires option 2 above): Personal Schemes
 #
