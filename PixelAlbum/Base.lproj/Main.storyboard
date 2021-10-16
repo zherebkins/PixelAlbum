@@ -12,7 +12,7 @@
         <!--My Albums-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="My Albums" id="BYZ-38-t0r" customClass="AlbumsListViewController" customModule="PixelAlbum" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AlbumsListViewController" title="My Albums" id="BYZ-38-t0r" customClass="AlbumsListViewController" customModule="PixelAlbum" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -102,19 +102,51 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="oYi-vm-7WF">
-                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="itemSize" width="130" height="130"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fCU-DD-h2A">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoCollectionCell" id="fCU-DD-h2A" customClass="PhotoCollectionCell" customModule="PixelAlbum" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Kic-tY-yAX">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ba4-iH-usE">
+                                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RAW" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tai-kd-n4y">
+                                                    <rect key="frame" x="87.5" y="108" width="34.5" height="18"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Modified" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9F9-Sp-X01">
+                                                    <rect key="frame" x="59" y="4" width="63" height="18"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="Ba4-iH-usE" secondAttribute="bottom" id="3Z9-bp-K9z"/>
+                                                <constraint firstItem="9F9-Sp-X01" firstAttribute="top" secondItem="Kic-tY-yAX" secondAttribute="top" constant="4" id="Eeu-yY-D54"/>
+                                                <constraint firstItem="Ba4-iH-usE" firstAttribute="leading" secondItem="Kic-tY-yAX" secondAttribute="leading" id="Hpr-ap-rPW"/>
+                                                <constraint firstAttribute="trailing" secondItem="9F9-Sp-X01" secondAttribute="trailing" constant="8" id="PbJ-XF-IH0"/>
+                                                <constraint firstAttribute="trailing" secondItem="Tai-kd-n4y" secondAttribute="trailing" constant="8" id="YgZ-Xb-1yh"/>
+                                                <constraint firstItem="Ba4-iH-usE" firstAttribute="top" secondItem="Kic-tY-yAX" secondAttribute="top" id="aNe-yx-pEL"/>
+                                                <constraint firstAttribute="trailing" secondItem="Ba4-iH-usE" secondAttribute="trailing" id="kIg-kf-LHd"/>
+                                                <constraint firstAttribute="bottom" secondItem="Tai-kd-n4y" secondAttribute="bottom" constant="4" id="qK1-Tm-jMi"/>
+                                            </constraints>
                                         </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="image" destination="Ba4-iH-usE" id="OpV-Cu-Q8J"/>
+                                            <outlet property="modifiedLabel" destination="9F9-Sp-X01" id="xwS-dW-gd9"/>
+                                            <outlet property="rawLabel" destination="Tai-kd-n4y" id="yh4-5g-3bk"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -128,6 +160,9 @@
                             <constraint firstAttribute="bottom" secondItem="yLo-PH-Rrg" secondAttribute="bottom" id="gok-BK-xx1"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="collectionView" destination="yLo-PH-Rrg" id="Cc4-ja-KJZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4a4-Wu-Yck" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

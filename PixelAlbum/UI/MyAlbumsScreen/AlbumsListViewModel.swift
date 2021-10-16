@@ -18,13 +18,31 @@ struct Album: Hashable {
 final class AlbumsListViewModel {
     @Published var albums: [Album] = [Album]()
     
-    private let assetsProvider = AlbumsAssetsProvider()
-    private let thumbnailProvider = ThumbnailsProvider()
+    private let didSelectAlbum: (PHAssetCollection) -> Void
+    private let assetsProvider: AlbumsAssetsProvider
+    private let thumbnailsProvider: ThumbnailsProvider
     
     private var thumbnailsAssets = Set<PHAsset>()
+    private var collections = Set<PhotoAlbum>()
+    
+    init(assetsProvider: AlbumsAssetsProvider, thumbnailsProvider: ThumbnailsProvider, didSelectAlbumBlock: @escaping (PHAssetCollection) -> Void) {
+        self.assetsProvider = assetsProvider
+        self.thumbnailsProvider = thumbnailsProvider
+        self.didSelectAlbum = didSelectAlbumBlock
+    }
     
     func onViewLoaded() {
         albums = [fetchAllPhotosAlbum()] + fetchAllUserAlbums()
+    }
+    
+    func didSelectAlbum(at index: Int) {
+        let selectedAlbum = albums[index]
+        
+        guard let photoAlbum = collections.first(where: { collection in
+            collection.name == selectedAlbum.name
+        }) else { return }
+        
+        didSelectAlbum(photoAlbum.collection)
     }
     
     func getThumbnail(for thumbnailId: String, result: @escaping (UIImage?) -> Void) {
@@ -32,15 +50,16 @@ final class AlbumsListViewModel {
             result(nil)
             return
         }
-        thumbnailProvider.getThumbnail(for: asset, completion: result)
+        thumbnailsProvider.getThumbnailIcon(for: asset, completion: result)
     }
     
     // MARK: - Private helpers
     
     private func fetchAllUserAlbums() -> [Album] {
         assetsProvider
-            .getPhotoAlbums()
+            .photoAlbums()
             .map {
+                collections.insert($0)
                 cacheThumbnail($0.thumbnailAsset)
                 
                 return Album(name: $0.name,

@@ -10,15 +10,23 @@ import Combine
 
 
 final class AlbumsListViewController: UIViewController {
+    
+    static func instantiate(with viewModel: AlbumsListViewModel) -> AlbumsListViewController {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AlbumsListViewController") as! AlbumsListViewController
+        vc.viewModel = viewModel
+        return vc
+    }
+    
     @IBOutlet private var tableView: UITableView!
     
-    private let viewModel = AlbumsListViewModel()
+    private var viewModel: AlbumsListViewModel!
     private var dataSource: UITableViewDiffableDataSource<Int, Album>!
         
     private var subscribtions = [AnyCancellable]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         dataSource = makeDiffableDataSource()
         configureBindings()
         viewModel.onViewLoaded()
@@ -35,29 +43,24 @@ final class AlbumsListViewController: UIViewController {
             .store(in: &subscribtions)
     }
     
-    func makeDiffableDataSource() -> UITableViewDiffableDataSource<Int, Album> {
-        .init(tableView: tableView) { [viewModel] tableView, indexPath, album in
+    private func makeDiffableDataSource() -> UITableViewDiffableDataSource<Int, Album> {
+        .init(tableView: tableView) { [unowned self] tableView, indexPath, album in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: AlbumTableViewCell.identifier,
                                                            for: indexPath) as? AlbumTableViewCell
             else {
                 fatalError("Wrong cell type for idetifier: \(AlbumTableViewCell.identifier)")
             }
             
-            cell.configure(with: album, thumbnailProvider: viewModel)
+            cell.configure(with: album, thumbnailProvider: self.viewModel)
             return cell
         }
     }
 }
 
+// MARK: - UITableViewDelegate
 extension AlbumsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let selectedAlbum = dataSource.snapshot().itemIdentifiers(inSection: indexPath.section)[indexPath.row]
-        
-        let albumContentVC = UIStoryboard(name: "Main", bundle: nil)
-            .instantiateViewController(withIdentifier: String(describing: AlbumContentViewController.self)) as! AlbumContentViewController
-        albumContentVC.photosAlbum = selectedAlbum
-        
-        navigationController?.pushViewController(albumContentVC, animated: true)
+        viewModel.didSelectAlbum(at: indexPath.row)
     }
 }
