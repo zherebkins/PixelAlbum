@@ -10,7 +10,14 @@ import Photos
 import Combine
 
 
-final class AlbumContentViewController: UIViewController {
+final class AlbumContentViewController: UIViewController {    
+    var selectedCellFrame: CGRect? {
+        guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) else {
+            return nil
+        }
+        
+        return collectionView.convert(cell.frame, to: view)
+    }
     
     static func instantiate(with viewModel: AlbumContentViewModel) -> AlbumContentViewController {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AlbumContentViewController") as! AlbumContentViewController
@@ -41,6 +48,15 @@ final class AlbumContentViewController: UIViewController {
         dataSource = makeDiffableDataSource()
         configureBindings()
         viewModel.onViewLoaded()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+//        if let indexPath = collectionView.indexPathsForSelectedItems?.first {
+//            collectionView.deselectItem(at: indexPath,
+//                                        animated: false)
+//        }
     }
     
     private func configureBindings() {
@@ -81,7 +97,25 @@ extension AlbumContentViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
+//        collectionView.deselectItem(at: indexPath, animated: true)
         viewModel.selectPhoto(at: indexPath.row)
+    }
+}
+
+extension AlbumContentViewController: ZoomAnimatorDelegate {
+    func transitionImageView(for zoomAnimator: ZoomAnimator) -> UIImageView? {
+        guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) as? PhotoCollectionCell else {
+            return nil
+        }
+        
+        return cell.image
+    }
+    
+    func transitionReferenceImageViewFrame(for zoomAnimator: ZoomAnimator) -> CGRect? {
+        guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) as? PhotoCollectionCell else {
+            return nil
+        }
+        
+        return cell.contentView.convert(cell.image.frame, to: view)
     }
 }

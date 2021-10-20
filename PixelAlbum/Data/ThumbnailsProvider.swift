@@ -45,6 +45,14 @@ final class ThumbnailsProvider {
                                                         resultHandler: { image, _ in completion(image) })
     }
     
+    func fetchOriginalImage(for asset: PHAsset, completion: @escaping (UIImage?) -> Void) -> PHImageRequestID {
+        return PHImageManager.default().requestImage(for: asset,
+                                                        targetSize: PHImageManagerMaximumSize,
+                                                        contentMode: .default,
+                                                        options: nil,
+                                                        resultHandler: { image, _ in completion(image) })
+    }
+    
     private func getThumbnailIcon(for asset: PHAsset, completion: @escaping (UIImage?) -> Void) -> PHImageRequestID {
         PHImageManager.default().requestImage(for: asset,
                                                  targetSize: CGSize(width: 42, height: 42),

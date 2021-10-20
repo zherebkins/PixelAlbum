@@ -10,7 +10,7 @@ import UIKit
 import Photos
 
 
-final class ApplicationCoordinator {
+final class ApplicationCoordinator: NSObject {
     private enum Services {
         static let assetsProvider = AssetsProvider()
         static let thumbnailProvider = ThumbnailsProvider(assetsProvider: assetsProvider)
@@ -18,6 +18,8 @@ final class ApplicationCoordinator {
     
     private let window: UIWindow
     private var displayingNavigationController: UINavigationController?
+    
+    private let zoomTransitionController = ZoomTransitionController()
     
     init(_ window: UIWindow) {
         self.window = window
@@ -35,6 +37,12 @@ final class ApplicationCoordinator {
     private func pushAlbumContentScreen(with album: Album) {
         let albumContentScreen = makeAlbumContentViewController(for: album)
         displayingNavigationController?.pushViewController(albumContentScreen, animated: true)
+    }
+    
+    private func showPhotoViewer(for asset: PHAsset) {
+        let viewController = makePhotoViewerViewController(for: asset)
+        displayingNavigationController?.delegate = zoomTransitionController
+        displayingNavigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: - Factory methods
@@ -56,6 +64,18 @@ final class ApplicationCoordinator {
         return .init(album,
                      assetsProvider: Services.assetsProvider,
                      thumbnailsProvider: Services.thumbnailProvider,
-                     didSelectPhotoOutput: { _ in })
+                     didSelectPhotoOutput: { [unowned self] in showPhotoViewer(for: $0)})
+    }
+    
+    func makePhotoViewerViewModel(for asset: PHAsset) -> PhotoViewerViewModel {
+        return PhotoViewerViewModel(
+            with: asset,
+            thumbnailsProvider: Services.thumbnailProvider
+        )
+    }
+    
+    func makePhotoViewerViewController(for asset: PHAsset) -> PhotoViewerViewController {
+        let viewModel = makePhotoViewerViewModel(for: asset)
+        return PhotoViewerViewController.instantiate(with: viewModel)
     }
 }

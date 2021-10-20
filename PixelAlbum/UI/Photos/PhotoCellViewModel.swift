@@ -41,6 +41,7 @@ final class PhotoCellViewModel {
     func cancelPreviewFetching() {
         if let requestId = runningPreveiewRequestId {
             thumbnailProvider.cancelFetch(by: requestId)
+            runningPreveiewRequestId = nil
         }
     }
 }

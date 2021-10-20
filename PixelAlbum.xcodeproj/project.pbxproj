@@ -23,8 +23,11 @@
 		B7951974271B482200091D85 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951973271B482200091D85 /* Album.swift */; };
 		B7951976271B6E0F00091D85 /* AlbumCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951975271B6E0F00091D85 /* AlbumCellViewModel.swift */; };
 		B7951978271C386A00091D85 /* PhotoCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951977271C386A00091D85 /* PhotoCellViewModel.swift */; };
+		B795197B271C45E400091D85 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B795197A271C45E400091D85 /* PhotoViewerViewController.swift */; };
 		B7DF1DB22718C517001312BA /* ThumbnailsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DF1DB12718C517001312BA /* ThumbnailsProvider.swift */; };
 		B7DF1DB62718C7D7001312BA /* AlbumContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DF1DB52718C7D7001312BA /* AlbumContentViewController.swift */; };
+		B7E92DD527209BA5008D31AC /* ZoomAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */; };
+		B7E92DD727209E14008D31AC /* ZoomTransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,12 +45,15 @@
 		B706CFC42718980F00F80979 /* AssetsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsProvider.swift; sourceTree = "<group>"; };
 		B706CFC62718A52200F80979 /* AlbumsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsListViewModel.swift; sourceTree = "<group>"; };
 		B7282E052718CC4C00A0A9F8 /* AlbumContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumContentViewModel.swift; sourceTree = "<group>"; };
-		B7951970271B330500091D85 /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
+		B7951970271B330500091D85 /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B7951973271B482200091D85 /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		B7951975271B6E0F00091D85 /* AlbumCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCellViewModel.swift; sourceTree = "<group>"; };
 		B7951977271C386A00091D85 /* PhotoCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCellViewModel.swift; sourceTree = "<group>"; };
+		B795197A271C45E400091D85 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		B7DF1DB12718C517001312BA /* ThumbnailsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailsProvider.swift; sourceTree = "<group>"; };
 		B7DF1DB52718C7D7001312BA /* AlbumContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumContentViewController.swift; sourceTree = "<group>"; };
+		B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomAnimator.swift; sourceTree = "<group>"; };
+		B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTransitionController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +107,7 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		B706CFC327188EC300F80979 /* MyAlbumsScreen */ = {
+		B706CFC327188EC300F80979 /* Albums */ = {
 			isa = PBXGroup;
 			children = (
 				B706CFB0271886B400F80979 /* AlbumsListViewController.swift */,
@@ -109,7 +115,7 @@
 				B706CFC127188E8800F80979 /* AlbumCellTableViewCell.swift */,
 				B7951975271B6E0F00091D85 /* AlbumCellViewModel.swift */,
 			);
-			path = MyAlbumsScreen;
+			path = Albums;
 			sourceTree = "<group>";
 		};
 		B7282E072718D00D00A0A9F8 /* Data */ = {
@@ -130,17 +136,28 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		B7951979271C45C800091D85 /* PhotoViewer */ = {
+			isa = PBXGroup;
+			children = (
+				B795197A271C45E400091D85 /* PhotoViewerViewController.swift */,
+			);
+			path = PhotoViewer;
+			sourceTree = "<group>";
+		};
 		B7DF1DB32718C794001312BA /* UI */ = {
 			isa = PBXGroup;
 			children = (
 				B7951970271B330500091D85 /* ApplicationCoordinator.swift */,
-				B706CFC327188EC300F80979 /* MyAlbumsScreen */,
-				B7DF1DB42718C7A7001312BA /* AlbumContentScreen */,
+				B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */,
+				B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */,
+				B706CFC327188EC300F80979 /* Albums */,
+				B7DF1DB42718C7A7001312BA /* Photos */,
+				B7951979271C45C800091D85 /* PhotoViewer */,
 			);
 			path = UI;
 			sourceTree = "<group>";
 		};
-		B7DF1DB42718C7A7001312BA /* AlbumContentScreen */ = {
+		B7DF1DB42718C7A7001312BA /* Photos */ = {
 			isa = PBXGroup;
 			children = (
 				B7DF1DB52718C7D7001312BA /* AlbumContentViewController.swift */,
@@ -148,7 +165,7 @@
 				B70498232719DF7300C623AF /* PhotoCollectionCell.swift */,
 				B7951977271C386A00091D85 /* PhotoCellViewModel.swift */,
 			);
-			path = AlbumContentScreen;
+			path = Photos;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,15 +241,18 @@
 			files = (
 				B706CFB1271886B400F80979 /* AlbumsListViewController.swift in Sources */,
 				B706CFC52718980F00F80979 /* AssetsProvider.swift in Sources */,
+				B7E92DD527209BA5008D31AC /* ZoomAnimator.swift in Sources */,
 				B7951971271B330500091D85 /* ApplicationCoordinator.swift in Sources */,
 				B706CFAD271886B400F80979 /* AppDelegate.swift in Sources */,
 				B706CFAF271886B400F80979 /* SceneDelegate.swift in Sources */,
+				B795197B271C45E400091D85 /* PhotoViewerViewController.swift in Sources */,
 				B7951974271B482200091D85 /* Album.swift in Sources */,
 				B7DF1DB62718C7D7001312BA /* AlbumContentViewController.swift in Sources */,
 				B70498222719D62100C623AF /* PhotosProvider.swift in Sources */,
 				B70498242719DF7300C623AF /* PhotoCollectionCell.swift in Sources */,
 				B7DF1DB22718C517001312BA /* ThumbnailsProvider.swift in Sources */,
 				B706CFC72718A52200F80979 /* AlbumsListViewModel.swift in Sources */,
+				B7E92DD727209E14008D31AC /* ZoomTransitionController.swift in Sources */,
 				B706CFC227188E8800F80979 /* AlbumCellTableViewCell.swift in Sources */,
 				B7951978271C386A00091D85 /* PhotoCellViewModel.swift in Sources */,
 				B7951976271B6E0F00091D85 /* AlbumCellViewModel.swift in Sources */,

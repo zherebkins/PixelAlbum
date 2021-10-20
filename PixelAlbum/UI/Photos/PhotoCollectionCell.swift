@@ -9,7 +9,7 @@ import UIKit
 import Photos
 
 final class PhotoCollectionCell: UICollectionViewCell {
-    @IBOutlet private var image: UIImageView!
+    @IBOutlet var image: UIImageView!
     @IBOutlet private var rawLabel: UILabel!
     @IBOutlet private var modifiedLabel: UILabel!
     

@@ -48,6 +48,7 @@ final class AlbumCellViewModel {
     func cancelThumbnailFetch() {
         if let requestId = runningThumbnailRequestId {
             thumbnailsProvider.cancelFetch(by: requestId)
+            runningThumbnailRequestId = nil
         }
     }
 }
