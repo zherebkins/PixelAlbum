@@ -10,15 +10,7 @@ import Photos
 import Combine
 
 
-final class AlbumContentViewController: UIViewController {    
-    var selectedCellFrame: CGRect? {
-        guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) else {
-            return nil
-        }
-        
-        return collectionView.convert(cell.frame, to: view)
-    }
-    
+final class AlbumContentViewController: UIViewController {
     static func instantiate(with viewModel: AlbumContentViewModel) -> AlbumContentViewController {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AlbumContentViewController") as! AlbumContentViewController
         vc.viewModel = viewModel
@@ -50,13 +42,11 @@ final class AlbumContentViewController: UIViewController {
         viewModel.onViewLoaded()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        if let indexPath = collectionView.indexPathsForSelectedItems?.first {
-//            collectionView.deselectItem(at: indexPath,
-//                                        animated: false)
-//        }
+        collectionView.indexPathsForSelectedItems?
+            .forEach { collectionView.deselectItem(at: $0, animated: true) }
     }
     
     private func configureBindings() {
@@ -84,6 +74,7 @@ final class AlbumContentViewController: UIViewController {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension AlbumContentViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
@@ -97,11 +88,11 @@ extension AlbumContentViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        collectionView.deselectItem(at: indexPath, animated: true)
         viewModel.selectPhoto(at: indexPath.row)
     }
 }
 
+// MARK: - ZoomAnimatorDelegate
 extension AlbumContentViewController: ZoomAnimatorDelegate {
     func transitionImageView(for zoomAnimator: ZoomAnimator) -> UIImageView? {
         guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) as? PhotoCollectionCell else {

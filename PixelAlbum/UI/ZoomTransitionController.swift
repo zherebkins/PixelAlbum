@@ -9,16 +9,16 @@ import UIKit
 
 
 final class ZoomTransitionController: NSObject {
-    let animator: ZoomAnimator
+    private let animator: ZoomAnimator
     
     /// The controller for the interactive transition during dismissal. Dragging up or down on the image
     /// initiates the interactive transition.
-//    let interactionController: ZoomDismissalInteractionController
+    let interactionController: UIPercentDrivenInteractiveTransition
 //    var isInteractive: Bool = false
     
     override init() {
         animator = ZoomAnimator()
-//        interactionController = ZoomDismissalInteractionController()
+        interactionController = UIPercentDrivenInteractiveTransition()
         super.init()
     }
 }
@@ -42,14 +42,16 @@ extension ZoomTransitionController: UINavigationControllerDelegate {
     /// Update the transition controller for a presentation or dismissal.
     /// It decides hether or not to use the interactive controller.
     /// The interactive controller uses the same animator, though.
-//    func navigationController(_ navigationController: UINavigationController,
-//                              interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-//
+    func navigationController(_ navigationController: UINavigationController,
+                              interactionControllerFor animationController: UIViewControllerAnimatedTransitioning)
+    -> UIViewControllerInteractiveTransitioning? {
+        animator.isPresenting ? nil : interactionController
+//        return interactionController
 //        if !self.isInteractive {
 //            return nil
 //        }
 //
 //        self.interactionController.animator = animator
 //        return self.interactionController
-//    }
+    }
 }

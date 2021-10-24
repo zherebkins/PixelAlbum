@@ -18,6 +18,7 @@
 		B706CFC227188E8800F80979 /* AlbumCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFC127188E8800F80979 /* AlbumCellTableViewCell.swift */; };
 		B706CFC52718980F00F80979 /* AssetsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFC42718980F00F80979 /* AssetsProvider.swift */; };
 		B706CFC72718A52200F80979 /* AlbumsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFC62718A52200F80979 /* AlbumsListViewModel.swift */; };
+		B70BB45C2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */; };
 		B7282E062718CC4C00A0A9F8 /* AlbumContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7282E052718CC4C00A0A9F8 /* AlbumContentViewModel.swift */; };
 		B7951971271B330500091D85 /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951970271B330500091D85 /* ApplicationCoordinator.swift */; };
 		B7951974271B482200091D85 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951973271B482200091D85 /* Album.swift */; };
@@ -44,6 +45,7 @@
 		B706CFC127188E8800F80979 /* AlbumCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCellTableViewCell.swift; sourceTree = "<group>"; };
 		B706CFC42718980F00F80979 /* AssetsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsProvider.swift; sourceTree = "<group>"; };
 		B706CFC62718A52200F80979 /* AlbumsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsListViewModel.swift; sourceTree = "<group>"; };
+		B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomPresentationDissmissDriver.swift; sourceTree = "<group>"; };
 		B7282E052718CC4C00A0A9F8 /* AlbumContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumContentViewModel.swift; sourceTree = "<group>"; };
 		B7951970271B330500091D85 /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B7951973271B482200091D85 /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			children = (
 				B7951970271B330500091D85 /* ApplicationCoordinator.swift */,
 				B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */,
+				B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */,
 				B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */,
 				B706CFC327188EC300F80979 /* Albums */,
 				B7DF1DB42718C7A7001312BA /* Photos */,
@@ -244,6 +247,7 @@
 				B7E92DD527209BA5008D31AC /* ZoomAnimator.swift in Sources */,
 				B7951971271B330500091D85 /* ApplicationCoordinator.swift in Sources */,
 				B706CFAD271886B400F80979 /* AppDelegate.swift in Sources */,
+				B70BB45C2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift in Sources */,
 				B706CFAF271886B400F80979 /* SceneDelegate.swift in Sources */,
 				B795197B271C45E400091D85 /* PhotoViewerViewController.swift in Sources */,
 				B7951974271B482200091D85 /* Album.swift in Sources */,

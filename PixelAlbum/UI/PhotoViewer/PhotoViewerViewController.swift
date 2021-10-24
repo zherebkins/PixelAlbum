@@ -35,6 +35,8 @@ final class PhotoViewerViewModel {
 }
 
 final class PhotoViewerViewController: UIViewController {
+    var interactiveController: UIPercentDrivenInteractiveTransition!
+    
     static func instantiate(with viewModel: PhotoViewerViewModel) -> PhotoViewerViewController {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PhotoViewerViewController") as! PhotoViewerViewController
         vc.viewModel = viewModel
@@ -58,11 +60,45 @@ final class PhotoViewerViewController: UIViewController {
             imageView.image = $0
         }
         .store(in: &subscribtions)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(with:)))
+        view.addGestureRecognizer(panGesture)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         viewModel.onViewDissapeared()
+    }
+    
+    @objc
+    func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
+        switch gestureRecognizer.state {
+        case .began:
+//            // unhide the navigation bar if needed and turn background white
+//            if let cell = collectionView.cellForItem(at: IndexPath(item: currentIndex, section: 0)) as? ImagePagingViewCell {
+//                cell.contentView.backgroundColor = .white
+//                navigationController?.setNavigationBarHidden(false, animated: true)
+//            }
+//
+//            transitionController.isInteractive = true
+            interactiveController.pause()
+            let _ = navigationController?.popViewController(animated: true)
+        case .ended:
+            interactiveController.finish()
+//            if transitionController.isInteractive {
+//                transitionController.isInteractive = false
+//                transitionController.didPanWith(gestureRecognizer: gestureRecognizer)
+//            }
+        default:
+            let distance = view.bounds.height / 2
+            
+            let percent = (gestureRecognizer.translation(in: view).y / distance)
+            
+            interactiveController.update(min(percent, 1.0))
+//            if transitionController.isInteractive {
+//                transitionController.didPanWith(gestureRecognizer: gestureRecognizer)
+//            }
+        }
     }
 }
 

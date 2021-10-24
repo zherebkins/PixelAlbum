@@ -41,6 +41,7 @@ final class ApplicationCoordinator: NSObject {
     
     private func showPhotoViewer(for asset: PHAsset) {
         let viewController = makePhotoViewerViewController(for: asset)
+        viewController.interactiveController = zoomTransitionController.interactionController
         displayingNavigationController?.delegate = zoomTransitionController
         displayingNavigationController?.pushViewController(viewController, animated: true)
     }
