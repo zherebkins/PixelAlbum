@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="q0M-nZ-ryu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
@@ -184,15 +184,15 @@
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="top" secondItem="0DQ-rx-eIa" secondAttribute="top" id="1g2-Y1-xxf"/>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="trailing" secondItem="0DQ-rx-eIa" secondAttribute="trailing" id="5U4-Xf-hag"/>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="height" secondItem="8qz-EI-exH" secondAttribute="height" id="9pj-J9-poH"/>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="width" secondItem="8qz-EI-exH" secondAttribute="width" id="PwG-Gb-RC7"/>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="bottom" secondItem="0DQ-rx-eIa" secondAttribute="bottom" id="ZTS-LI-9ey"/>
-                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="leading" secondItem="0DQ-rx-eIa" secondAttribute="leading" id="ng2-B3-8Jq"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="top" secondItem="Ixk-uY-iQs" secondAttribute="top" id="1g2-Y1-xxf"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="trailing" secondItem="Ixk-uY-iQs" secondAttribute="trailing" id="5U4-Xf-hag"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="height" secondItem="b60-sr-B7h" secondAttribute="height" id="9pj-J9-poH"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="width" secondItem="b60-sr-B7h" secondAttribute="width" id="PwG-Gb-RC7"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="bottom" secondItem="Ixk-uY-iQs" secondAttribute="bottom" id="ZTS-LI-9ey"/>
+                                    <constraint firstItem="zMv-Y5-P5n" firstAttribute="leading" secondItem="Ixk-uY-iQs" secondAttribute="leading" id="ng2-B3-8Jq"/>
                                 </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="0DQ-rx-eIa"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="8qz-EI-exH"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Ixk-uY-iQs"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="b60-sr-B7h"/>
                                 <connections>
                                     <outlet property="delegate" destination="yCG-wA-D7w" id="e2p-FR-GVt"/>
                                 </connections>
@@ -214,22 +214,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VZc-Ca-p9h" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1665.217391304348" y="97.767857142857139"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="hpk-8O-VSE">
-            <objects>
-                <navigationController id="q0M-nZ-ryu" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jlC-Oj-dbk">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="eCl-Q0-RbB"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Qba-8j-Tze" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-790" y="98"/>
         </scene>
     </scenes>
     <resources>

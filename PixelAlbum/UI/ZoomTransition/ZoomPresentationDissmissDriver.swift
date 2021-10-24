@@ -27,8 +27,7 @@ final class ZoomPresentationDissmissDriver: NSObject {
             let fromReferenceImageView = animator.fromDelegate?.transitionImageView(),
             let fromReferenceImageViewFrame = animator.fromDelegate?.transitionReferenceImageViewFrame(),
             let toReferenceImageView = animator.toDelegate?.transitionImageView(),
-            let toReferenceImageViewFrame = animator.toDelegate?.transitionReferenceImageViewFrame(),
-            let toVC = transitionContext.viewController(forKey: .to)
+            let toReferenceImageViewFrame = animator.toDelegate?.transitionReferenceImageViewFrame()
         else {
             return
         }
@@ -42,7 +41,6 @@ final class ZoomPresentationDissmissDriver: NSObject {
             let shouldFinish = shouldFinish(with: transitionProgress)
             
             UIView.animate(withDuration: dismissAnimationDuration, delay: 0, options: .curveEaseOut, animations: {
-                toVC.navigationController?.navigationBar.alpha = 1
                 fromView.alpha = shouldFinish ? 0 : 1
                 self.transitionImageView?.frame = shouldFinish ? toReferenceImageViewFrame : fromReferenceImageViewFrame
             }, completion: { _ in
@@ -60,8 +58,6 @@ final class ZoomPresentationDissmissDriver: NSObject {
             })
             
         } else {
-            toVC.navigationController?.navigationBar.alpha = 0
-
             fromView.alpha = alpha(for: transitionProgress)
             let scale = imageScale(for: transitionProgress)
             transitionImageView?.transform = CGAffineTransform(scaleX: scale, y: scale)
@@ -87,8 +83,12 @@ final class ZoomPresentationDissmissDriver: NSObject {
     
     private func imageCenter(with gesture: UIPanGestureRecognizer, in view: UIView) -> CGPoint {
         let translationPoint = gesture.translation(in: view)
-        return CGPoint(x: anchorImageFrame.midX + translationPoint.x,
-                       y: anchorImageFrame.midY + translationPoint.y)
+        
+        let maxXDelta = view.bounds.width / 3
+        let xOffset = min(max(translationPoint.x, -maxXDelta), maxXDelta)
+        let yOffset = max(translationPoint.y, -50)
+        return CGPoint(x: anchorImageFrame.midX + xOffset,
+                       y: anchorImageFrame.midY + yOffset)
     }
     
     private func alpha(for progress: CGFloat) -> CGFloat {
@@ -121,7 +121,8 @@ extension ZoomPresentationDissmissDriver: UIViewControllerInteractiveTransitioni
         
         containerView.addSubview(toView)
         containerView.addSubview(fromView)
-        containerView.addSubview(transitionImageView)
+        // Trick to add image above navigation bar hierarchy
+        containerView.superview?.superview?.addSubview(transitionImageView)
         
         self.transitionImageView = transitionImageView
         self.anchorImageFrame = fromReferenceImageViewFrame
