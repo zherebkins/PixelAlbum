@@ -24,10 +24,11 @@ final class ZoomPresentationDissmissDriver: NSObject {
         guard
             let transitionContext = transitionContext,
             let fromView = transitionContext.view(forKey: .from),
-            let fromReferenceImageView = animator.fromDelegate?.transitionImageView(for: animator),
-            let fromReferenceImageViewFrame = animator.fromDelegate?.transitionReferenceImageViewFrame(for: animator),
-            let toReferenceImageView = animator.toDelegate?.transitionImageView(for: animator),
-            let toReferenceImageViewFrame = animator.toDelegate?.transitionReferenceImageViewFrame(for: animator)
+            let fromReferenceImageView = animator.fromDelegate?.transitionImageView(),
+            let fromReferenceImageViewFrame = animator.fromDelegate?.transitionReferenceImageViewFrame(),
+            let toReferenceImageView = animator.toDelegate?.transitionImageView(),
+            let toReferenceImageViewFrame = animator.toDelegate?.transitionReferenceImageViewFrame(),
+            let toVC = transitionContext.viewController(forKey: .to)
         else {
             return
         }
@@ -41,6 +42,7 @@ final class ZoomPresentationDissmissDriver: NSObject {
             let shouldFinish = shouldFinish(with: transitionProgress)
             
             UIView.animate(withDuration: dismissAnimationDuration, delay: 0, options: .curveEaseOut, animations: {
+                toVC.navigationController?.navigationBar.alpha = 1
                 fromView.alpha = shouldFinish ? 0 : 1
                 self.transitionImageView?.frame = shouldFinish ? toReferenceImageViewFrame : fromReferenceImageViewFrame
             }, completion: { _ in
@@ -58,6 +60,8 @@ final class ZoomPresentationDissmissDriver: NSObject {
             })
             
         } else {
+            toVC.navigationController?.navigationBar.alpha = 0
+
             fromView.alpha = alpha(for: transitionProgress)
             let scale = imageScale(for: transitionProgress)
             transitionImageView?.transform = CGAffineTransform(scaleX: scale, y: scale)
@@ -103,8 +107,8 @@ extension ZoomPresentationDissmissDriver: UIViewControllerInteractiveTransitioni
         let containerView = transitionContext.containerView
         
         guard
-            let fromReferenceImage = animator.fromDelegate?.transitionImageView(for: animator)?.image,
-            let fromReferenceImageViewFrame = animator.fromDelegate?.transitionReferenceImageViewFrame(for: animator),
+            let fromReferenceImage = animator.fromDelegate?.transitionImageView()?.image,
+            let fromReferenceImageViewFrame = animator.fromDelegate?.transitionReferenceImageViewFrame(),
             let toView = transitionContext.view(forKey: .to),
             let fromView = transitionContext.view(forKey: .from)
         else {

@@ -9,8 +9,8 @@ import UIKit
 import os
 
 protocol ZoomAnimatorDelegate: AnyObject {
-    func transitionImageView(for zoomAnimator: ZoomAnimator) -> UIImageView?
-    func transitionReferenceImageViewFrame(for zoomAnimator: ZoomAnimator) -> CGRect?
+    func transitionImageView() -> UIImageView?
+    func transitionReferenceImageViewFrame() -> CGRect?
 }
 
 final class ZoomAnimator: NSObject {
@@ -22,12 +22,12 @@ final class ZoomAnimator: NSObject {
     private func animateZoomInTransition(using transitionContext: UIViewControllerContextTransitioning) {
         let containerView = transitionContext.containerView
         guard
-            let fromReferenceImageView = fromDelegate?.transitionImageView(for: self),
-            let fromReferenceImageViewFrame = fromDelegate?.transitionReferenceImageViewFrame(for: self),
+            let fromReferenceImageView = fromDelegate?.transitionImageView(),
+            let fromReferenceImageViewFrame = fromDelegate?.transitionReferenceImageViewFrame(),
             
             let toView = transitionContext.view(forKey: .to),
-            let toReferenceImageView = toDelegate?.transitionImageView(for: self),
-            let toReferenceImageViewFrame = toDelegate?.transitionReferenceImageViewFrame(for: self)
+            let toReferenceImageView = toDelegate?.transitionImageView(),
+            let toReferenceImageViewFrame = toDelegate?.transitionReferenceImageViewFrame()
         else {
             return
         }
@@ -66,12 +66,12 @@ final class ZoomAnimator: NSObject {
         let containerView = transitionContext.containerView
         guard
             let fromView = transitionContext.view(forKey: .from),
-            let fromReferenceImageView = fromDelegate?.transitionImageView(for: self),
-            let fromReferenceImageViewFrame = fromDelegate?.transitionReferenceImageViewFrame(for: self),
+            let fromReferenceImageView = fromDelegate?.transitionImageView(),
+            let fromReferenceImageViewFrame = fromDelegate?.transitionReferenceImageViewFrame(),
             
             let toView = transitionContext.view(forKey: .to),
-            let toReferenceImageView = toDelegate?.transitionImageView(for: self),
-            let toReferenceImageViewFrame = toDelegate?.transitionReferenceImageViewFrame(for: self)
+            let toReferenceImageView = toDelegate?.transitionImageView(),
+            let toReferenceImageViewFrame = toDelegate?.transitionReferenceImageViewFrame()
         else {
             return
         }

@@ -28,7 +28,13 @@ final class PhotoViewerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.backgroundColor = .systemBackground
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular)
+        ]
+        
         scrollView.maximumZoomScale = 5.0
         scrollView.bouncesZoom = true
         scrollView.isScrollEnabled = false
@@ -37,6 +43,8 @@ final class PhotoViewerViewController: UIViewController {
             imageView.image = $0
         }
         .store(in: &subscribtions)
+        
+        title = viewModel.fileName
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(with:)))
         view.addGestureRecognizer(panGesture)
@@ -75,11 +83,11 @@ extension PhotoViewerViewController: UIScrollViewDelegate {
 }
 
 extension PhotoViewerViewController: ZoomAnimatorDelegate {
-    func transitionImageView(for zoomAnimator: ZoomAnimator) -> UIImageView? {
+    func transitionImageView() -> UIImageView? {
         imageView
     }
     
-    func transitionReferenceImageViewFrame(for zoomAnimator: ZoomAnimator) -> CGRect? {
+    func transitionReferenceImageViewFrame() -> CGRect? {
         return view.frame
     }
 }

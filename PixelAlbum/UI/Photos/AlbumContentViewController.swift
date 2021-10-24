@@ -94,7 +94,7 @@ extension AlbumContentViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - ZoomAnimatorDelegate
 extension AlbumContentViewController: ZoomAnimatorDelegate {
-    func transitionImageView(for zoomAnimator: ZoomAnimator) -> UIImageView? {
+    func transitionImageView() -> UIImageView? {
         guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) as? PhotoCollectionCell else {
             return nil
         }
@@ -102,7 +102,7 @@ extension AlbumContentViewController: ZoomAnimatorDelegate {
         return cell.image
     }
     
-    func transitionReferenceImageViewFrame(for zoomAnimator: ZoomAnimator) -> CGRect? {
+    func transitionReferenceImageViewFrame() -> CGRect? {
         guard let index = collectionView.indexPathsForSelectedItems?.first, let cell = collectionView.cellForItem(at: index) as? PhotoCollectionCell else {
             return nil
         }
