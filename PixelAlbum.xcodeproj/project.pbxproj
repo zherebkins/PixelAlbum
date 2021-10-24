@@ -19,6 +19,7 @@
 		B706CFC52718980F00F80979 /* AssetsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFC42718980F00F80979 /* AssetsProvider.swift */; };
 		B706CFC72718A52200F80979 /* AlbumsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFC62718A52200F80979 /* AlbumsListViewModel.swift */; };
 		B70BB45C2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */; };
+		B70BB45E2725C399000BAD44 /* PhotoViewerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70BB45D2725C399000BAD44 /* PhotoViewerViewModel.swift */; };
 		B7282E062718CC4C00A0A9F8 /* AlbumContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7282E052718CC4C00A0A9F8 /* AlbumContentViewModel.swift */; };
 		B7951971271B330500091D85 /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951970271B330500091D85 /* ApplicationCoordinator.swift */; };
 		B7951974271B482200091D85 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7951973271B482200091D85 /* Album.swift */; };
@@ -46,6 +47,7 @@
 		B706CFC42718980F00F80979 /* AssetsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsProvider.swift; sourceTree = "<group>"; };
 		B706CFC62718A52200F80979 /* AlbumsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsListViewModel.swift; sourceTree = "<group>"; };
 		B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomPresentationDissmissDriver.swift; sourceTree = "<group>"; };
+		B70BB45D2725C399000BAD44 /* PhotoViewerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewModel.swift; sourceTree = "<group>"; };
 		B7282E052718CC4C00A0A9F8 /* AlbumContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumContentViewModel.swift; sourceTree = "<group>"; };
 		B7951970271B330500091D85 /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B7951973271B482200091D85 /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 		B706CFA0271886B400F80979 = {
 			isa = PBXGroup;
 			children = (
+				B70BB45D2725C399000BAD44 /* PhotoViewerViewModel.swift */,
 				B706CFAB271886B400F80979 /* PixelAlbum */,
 				B706CFAA271886B400F80979 /* Products */,
 			);
@@ -259,6 +262,7 @@
 				B7E92DD727209E14008D31AC /* ZoomTransitionController.swift in Sources */,
 				B706CFC227188E8800F80979 /* AlbumCellTableViewCell.swift in Sources */,
 				B7951978271C386A00091D85 /* PhotoCellViewModel.swift in Sources */,
+				B70BB45E2725C399000BAD44 /* PhotoViewerViewModel.swift in Sources */,
 				B7951976271B6E0F00091D85 /* AlbumCellViewModel.swift in Sources */,
 				B7282E062718CC4C00A0A9F8 /* AlbumContentViewModel.swift in Sources */,
 			);

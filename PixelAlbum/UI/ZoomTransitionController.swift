@@ -9,17 +9,19 @@ import UIKit
 
 
 final class ZoomTransitionController: NSObject {
+    var isInteractive: Bool = false
+    
+    let interactionController: ZoomPresentationDissmissDriver
     private let animator: ZoomAnimator
-    
-    /// The controller for the interactive transition during dismissal. Dragging up or down on the image
-    /// initiates the interactive transition.
-    let interactionController: UIPercentDrivenInteractiveTransition
-//    var isInteractive: Bool = false
-    
+
     override init() {
         animator = ZoomAnimator()
-        interactionController = UIPercentDrivenInteractiveTransition()
+        interactionController = ZoomPresentationDissmissDriver(animator: animator)
         super.init()
+    }
+    
+    func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
+        interactionController.didPan(with: gestureRecognizer)
     }
 }
 
@@ -30,8 +32,12 @@ extension ZoomTransitionController: UINavigationControllerDelegate {
                               animationControllerFor operation: UINavigationController.Operation,
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        guard let from = fromVC as? ZoomAnimatorDelegate,
-              let to = toVC as? ZoomAnimatorDelegate else { return nil}
+        guard
+            let from = fromVC as? ZoomAnimatorDelegate,
+            let to = toVC as? ZoomAnimatorDelegate
+        else {
+            return nil
+        }
         
         animator.fromDelegate = from
         animator.toDelegate = to
@@ -39,19 +45,13 @@ extension ZoomTransitionController: UINavigationControllerDelegate {
         return animator
     }
     
-    /// Update the transition controller for a presentation or dismissal.
-    /// It decides hether or not to use the interactive controller.
-    /// The interactive controller uses the same animator, though.
     func navigationController(_ navigationController: UINavigationController,
                               interactionControllerFor animationController: UIViewControllerAnimatedTransitioning)
     -> UIViewControllerInteractiveTransitioning? {
-        animator.isPresenting ? nil : interactionController
-//        return interactionController
-//        if !self.isInteractive {
-//            return nil
-//        }
-//
-//        self.interactionController.animator = animator
-//        return self.interactionController
+        guard isInteractive, !animator.isPresenting else {
+            return nil
+        }
+        
+        return interactionController
     }
 }

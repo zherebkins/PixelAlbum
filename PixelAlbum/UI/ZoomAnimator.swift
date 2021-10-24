@@ -97,6 +97,7 @@ final class ZoomAnimator: NSObject {
             },
             completion: { _ in
                 toReferenceImageView.isHidden = false
+                transitionImageView.removeFromSuperview()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }

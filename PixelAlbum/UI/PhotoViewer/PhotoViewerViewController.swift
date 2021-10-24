@@ -6,39 +6,16 @@
 //
 
 import UIKit
-import Photos
 import Combine
 
-final class PhotoViewerViewModel {
-    @Published var image: UIImage?
-
-    private let asset: PHAsset
-    private let thumbnailsProvider: ThumbnailsProvider
-    private var runningImageRequestId: PHImageRequestID? = nil
-
-    
-    init(with asset: PHAsset, thumbnailsProvider: ThumbnailsProvider) {
-        self.thumbnailsProvider = thumbnailsProvider
-        self.asset = asset
-        
-        runningImageRequestId = thumbnailsProvider.fetchOriginalImage(for: asset, completion: { [weak self] img in
-            self?.image = img
-        })
-    }
-    
-    func onViewDissapeared() {
-        if let requestId = runningImageRequestId {
-            thumbnailsProvider.cancelFetch(by: requestId)
-            runningImageRequestId = nil
-        }
-    }
-}
-
 final class PhotoViewerViewController: UIViewController {
-    var interactiveController: UIPercentDrivenInteractiveTransition!
+    var transitionController: ZoomTransitionController?
     
     static func instantiate(with viewModel: PhotoViewerViewModel) -> PhotoViewerViewController {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PhotoViewerViewController") as! PhotoViewerViewController
+        let vc = UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(
+                withIdentifier: "PhotoViewerViewController"
+            ) as! PhotoViewerViewController
         vc.viewModel = viewModel
         return vc
     }
@@ -71,33 +48,18 @@ final class PhotoViewerViewController: UIViewController {
     }
     
     @objc
-    func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
+    private func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
-//            // unhide the navigation bar if needed and turn background white
-//            if let cell = collectionView.cellForItem(at: IndexPath(item: currentIndex, section: 0)) as? ImagePagingViewCell {
-//                cell.contentView.backgroundColor = .white
-//                navigationController?.setNavigationBarHidden(false, animated: true)
-//            }
-//
-//            transitionController.isInteractive = true
-            interactiveController.pause()
+            transitionController?.isInteractive = true
             let _ = navigationController?.popViewController(animated: true)
-        case .ended:
-            interactiveController.finish()
-//            if transitionController.isInteractive {
-//                transitionController.isInteractive = false
-//                transitionController.didPanWith(gestureRecognizer: gestureRecognizer)
-//            }
+
+        case .changed:
+            transitionController?.didPan(with: gestureRecognizer)
+            
         default:
-            let distance = view.bounds.height / 2
-            
-            let percent = (gestureRecognizer.translation(in: view).y / distance)
-            
-            interactiveController.update(min(percent, 1.0))
-//            if transitionController.isInteractive {
-//                transitionController.didPanWith(gestureRecognizer: gestureRecognizer)
-//            }
+            transitionController?.isInteractive = false
+            transitionController?.didPan(with: gestureRecognizer)
         }
     }
 }
