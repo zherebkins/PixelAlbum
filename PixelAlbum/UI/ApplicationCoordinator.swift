@@ -12,8 +12,7 @@ import Photos
 
 final class ApplicationCoordinator: NSObject {
     private enum Services {
-        static let assetsProvider = AssetsProvider()
-        static let thumbnailProvider = ThumbnailsProvider(assetsProvider: assetsProvider)
+        static let thumbnailProvider = ThumbnailsProvider()
     }
     
     private let window: UIWindow
@@ -62,8 +61,7 @@ final class ApplicationCoordinator: NSObject {
     
     // MARK: - Factory methods
     func makeAlbumsListViewController() -> UIViewController {
-        let viewModel = AlbumsListViewModel(assetsProvider: Services.assetsProvider,
-                                            thumbnailsProvider: Services.thumbnailProvider,
+        let viewModel = AlbumsListViewModel(thumbnailsProvider: Services.thumbnailProvider,
                                             didSelectAlbumOutput: { [unowned self] in pushAlbumContentScreen(with: $0) })
         
         let albumsListVC = AlbumsListViewController.instantiate(with: viewModel)
@@ -77,7 +75,6 @@ final class ApplicationCoordinator: NSObject {
     
     func makeAlbumContentViewModel(for album: Album, presentPhotoScreenBlock: @escaping (PHAsset) -> Void) -> AlbumContentViewModel {
         return .init(album,
-                     assetsProvider: Services.assetsProvider,
                      thumbnailsProvider: Services.thumbnailProvider,
                      didSelectPhotoOutput: presentPhotoScreenBlock)
     }

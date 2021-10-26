@@ -26,6 +26,7 @@ final class AlbumsListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         dataSource = makeDiffableDataSource()
+        dataSource.defaultRowAnimation = .fade
         configureBindings()
         viewModel.onViewLoaded()
     }
@@ -40,6 +41,7 @@ final class AlbumsListViewController: UIViewController {
     
     private func configureBindings() {
         viewModel.$albums
+            .receive(on: DispatchQueue.main)
             .sink { [unowned self] albums in
                 var snapshot = NSDiffableDataSourceSnapshot<Int, AlbumCellViewModel>()
                 snapshot.appendSections([0])

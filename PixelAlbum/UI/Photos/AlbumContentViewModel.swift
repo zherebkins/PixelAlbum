@@ -13,19 +13,16 @@ final class AlbumContentViewModel: NSObject {
     
     private let content: Album
     
-    private let assetsProvider: AssetsProvider
     private let thumbnailsProvider: ThumbnailsProvider
     private let didSelectPhoto: (PHAsset) -> Void
     
     private var lastFetchResult: PHFetchResult<PHAsset>?
     
     init(_ album: Album,
-         assetsProvider: AssetsProvider,
          thumbnailsProvider: ThumbnailsProvider,
          didSelectPhotoOutput: @escaping (PHAsset) -> Void)
     {
         self.content = album
-        self.assetsProvider = assetsProvider
         self.thumbnailsProvider = thumbnailsProvider
         self.didSelectPhoto = didSelectPhotoOutput
     }
@@ -56,7 +53,7 @@ final class AlbumContentViewModel: NSObject {
         
         switch content {
         case .allPhotos:
-            assets = assetsProvider.allPhotos()
+            assets = fetchAllAssets()
         case .userCollection(let assetCollection):
             assets = fetchAssets(from: assetCollection)
         }

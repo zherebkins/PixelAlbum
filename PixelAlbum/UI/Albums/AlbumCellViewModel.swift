@@ -5,44 +5,56 @@
 //  Created by Stas Zherebkin on 16.10.2021.
 //
 
-import Foundation
 import UIKit
+import Combine
 import Photos
 
-final class AlbumCellViewModel {
-    let name: String
-    let itemsCount: Int
+final class AlbumCellViewModel: NSObject {
+    @Published var name: String
+    @Published var itemsCount: Int
+    var thumbnailWasChanged = PassthroughSubject<Void, Never>()
     
-    let album: Album
-    let thumbnailsProvider: ThumbnailsProvider
+    var album: Album
+    private let thumbnailsProvider: ThumbnailsProvider
+    
+    private var contentAssetsFetchResult: PHFetchResult<PHAsset>
     
     private var runningThumbnailRequestId: PHImageRequestID? = nil
     
-    init(album: Album, name: String, itemsCount: Int, thumbnailsProvider: ThumbnailsProvider) {
+    init(with album: Album, thumbnailsGenerator: ThumbnailsProvider) {
+        self.thumbnailsProvider = thumbnailsGenerator
         self.album = album
-        self.name = name
-        self.itemsCount = itemsCount
-        self.thumbnailsProvider = thumbnailsProvider
+        
+        switch album {
+        case .allPhotos:
+            self.name = "All Photos"
+            self.contentAssetsFetchResult = Self.fetchAllPhotos()
+            self.itemsCount = contentAssetsFetchResult.count
+
+        case .userCollection(let assetsCollection):
+            self.name = assetsCollection.localizedTitle ?? ""
+            contentAssetsFetchResult = Self.fetchPhotoAssets(in: assetsCollection)
+            self.itemsCount = contentAssetsFetchResult.count
+        }
+        super.init()
+      
+        PHPhotoLibrary.shared().register(self)
+    }
+    
+    deinit {
+        cancelThumbnailFetch()
     }
     
     func fetchThumbnail(result: @escaping (UIImage?) -> Void) {
-        guard itemsCount > 0 else {
+        guard let thumbnailAsset = contentAssetsFetchResult.firstObject else {
             result(nil)
             return
         }
         
-        let fetchCompletion: (UIImage?) -> Void = { [weak self] in
+        runningThumbnailRequestId = thumbnailsProvider.getThumbnailIcon(for: thumbnailAsset, completion: { [weak self] in
             self?.runningThumbnailRequestId = nil
             result($0)
-        }
-        
-        switch album {
-        case .allPhotos:
-            runningThumbnailRequestId = thumbnailsProvider.fetchLastPhotoThumbnail(completion: fetchCompletion)
-            
-        case .userCollection(let collection):
-            runningThumbnailRequestId = thumbnailsProvider.fetchThumbnailIcon(for: collection, completion: fetchCompletion)
-        }
+        })
     }
     
     func cancelThumbnailFetch() {
@@ -51,16 +63,46 @@ final class AlbumCellViewModel {
             runningThumbnailRequestId = nil
         }
     }
-}
-
-extension AlbumCellViewModel: Hashable {
-    static func == (lhs: AlbumCellViewModel, rhs: AlbumCellViewModel) -> Bool {
-        lhs.name == rhs.name &&
-        lhs.itemsCount == rhs.itemsCount &&
-        lhs.album == rhs.album
+    
+    private static func fetchPhotoAssets(in collection: PHAssetCollection) -> PHFetchResult<PHAsset> {
+        return PHAsset.fetchAssets(in: collection, options: .photoAssetsFetchOptions)
     }
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(album)
+    private static func fetchAllPhotos() -> PHFetchResult<PHAsset> {
+        return PHAsset.fetchAssets(with: .descendingDatePhotoAssetsFetchOptions)
+    }
+}
+
+// MARK: - PHPhotoLibraryChangeObserver
+extension AlbumCellViewModel: PHPhotoLibraryChangeObserver {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        applyCollectionUpdates(changeInstance)
+        applyAssetsUpdates(changeInstance)
+    }
+    
+    private func applyCollectionUpdates(_ changeInstance: PHChange) {
+        guard
+            case let .userCollection(collection) = album,
+            let collectionChanges = changeInstance.changeDetails(for: collection),
+            let updatedCollection = collectionChanges.objectAfterChanges
+        else {
+            return
+        }
+        
+        album = .userCollection(updatedCollection)
+        name = updatedCollection.localizedTitle ?? ""
+    }
+    
+    private func applyAssetsUpdates(_ changeInstance: PHChange) {
+        guard let changes = changeInstance.changeDetails(for: contentAssetsFetchResult) else {
+            return
+        }
+        
+        contentAssetsFetchResult = changes.fetchResultAfterChanges
+        itemsCount = contentAssetsFetchResult.count
+        
+        if changes.changedIndexes?.contains(0) ?? false {
+            thumbnailWasChanged.send()
+        }
     }
 }

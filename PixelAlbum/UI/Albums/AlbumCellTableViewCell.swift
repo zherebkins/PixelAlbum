@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class AlbumTableViewCell: UITableViewCell {
     @IBOutlet private var thumbnail: UIImageView!
@@ -13,6 +14,7 @@ final class AlbumTableViewCell: UITableViewCell {
     @IBOutlet private var itemsCountLabel: UILabel!
     
     private var displayingViewModel: AlbumCellViewModel?
+    private var subscribtions = [AnyCancellable]()
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -24,20 +26,45 @@ final class AlbumTableViewCell: UITableViewCell {
     func configure(with viewModel: AlbumCellViewModel) {
         displayingViewModel = viewModel
         
-        nameLabel.text = viewModel.name
-        itemsCountLabel.text = "\(viewModel.itemsCount)"
+        viewModel.$name
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.nameLabel.text = $0
+            }
+            .store(in: &subscribtions)
         
+        viewModel.$itemsCount
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.itemsCountLabel.text = "\($0)"
+            }.store(in: &subscribtions)
+        
+        viewModel.thumbnailWasChanged
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.fetchThumbnail()
+            }.store(in: &subscribtions)
+        
+        fetchThumbnail()
+    }
+    
+    func configure(albumName: String, photosCount: Int) {
+        nameLabel.text = albumName
+        itemsCountLabel.text = "\(photosCount)"
+    }
+    
+    private func fetchThumbnail() {
+        guard let viewModel = displayingViewModel else {
+            return
+        }
+        
+        viewModel.cancelThumbnailFetch()
         viewModel.fetchThumbnail { [weak self] image in
             guard let self = self, self.displayingViewModel == viewModel else {
                 return
             }
             self.thumbnail.image = image
         }
-    }
-    
-    func configure(albumName: String, photosCount: Int) {
-        nameLabel.text = albumName
-        itemsCountLabel.text = "\(photosCount)"
     }
     
     static var identifier: String {

@@ -10,24 +10,28 @@ import Photos
 import UIKit
 
 
-final class AlbumsListViewModel {
+final class AlbumsListViewModel: NSObject {
     @Published var albums: [AlbumCellViewModel] = [AlbumCellViewModel]()
     
     private let didSelectAlbum: (Album) -> Void
-    private let assetsProvider: AssetsProvider
     private let thumbnailsProvider: ThumbnailsProvider
         
-    init(assetsProvider: AssetsProvider,
-         thumbnailsProvider: ThumbnailsProvider,
+    private let allPhotosAlbum: AlbumCellViewModel
+    
+    init(thumbnailsProvider: ThumbnailsProvider,
          didSelectAlbumOutput: @escaping (Album) -> Void)
     {
-        self.assetsProvider = assetsProvider
         self.thumbnailsProvider = thumbnailsProvider
         self.didSelectAlbum = didSelectAlbumOutput
+        
+        self.allPhotosAlbum = AlbumCellViewModel(with: .allPhotos,
+                                                 thumbnailsGenerator: thumbnailsProvider)
     }
     
     func onViewLoaded() {
-        albums = [fetchAllPhotosAlbum()] + fetchAllUserAlbums()
+        albums = [allPhotosAlbum] + fetchAllUserAlbums()
+        
+        PHPhotoLibrary.shared().register(self)
     }
     
     func didSelectAlbum(at index: Int) {
@@ -37,20 +41,50 @@ final class AlbumsListViewModel {
     // MARK: - Private helpers
     
     private func fetchAllUserAlbums() -> [AlbumCellViewModel] {
-        assetsProvider
-            .photoAlbums()
-            .map {
-                AlbumCellViewModel(album: .userCollection($0.collection),
-                                   name: $0.name,
-                                   itemsCount: $0.itemsCount,
-                                   thumbnailsProvider: thumbnailsProvider)
-            }
+        fetchUserAssetsCollections().map {
+            return AlbumCellViewModel(with: .userCollection($0),
+                                      thumbnailsGenerator: thumbnailsProvider)
+        }
     }
     
-    private func fetchAllPhotosAlbum() -> AlbumCellViewModel {
-        return AlbumCellViewModel(album: .allPhotos,
-                                  name: "All Photos",
-                                  itemsCount: assetsProvider.allPhotosCount(),
-                                  thumbnailsProvider: thumbnailsProvider)
+    
+    private var lastUserCollectionsFetchResult: PHFetchResult<PHAssetCollection>?
+    
+    private func fetchUserAssetsCollections() -> [PHAssetCollection] {
+        let result = PHAssetCollection.fetchAssetCollections(with: .album,
+                                                             subtype: .any,
+                                                             options: nil)
+        lastUserCollectionsFetchResult = result
+        
+        return result.assetCollections
+    }
+}
+
+extension AlbumsListViewModel: PHPhotoLibraryChangeObserver {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        guard
+            let collectionsFetch = lastUserCollectionsFetchResult,
+            let updates = changeInstance.changeDetails(for: collectionsFetch)
+        else {
+            return
+        }
+        
+        let updateFetchResult = updates.fetchResultAfterChanges
+        lastUserCollectionsFetchResult = updateFetchResult
+
+        albums = [allPhotosAlbum] + updateFetchResult.assetCollections.map {
+            AlbumCellViewModel(with: .userCollection($0), thumbnailsGenerator: thumbnailsProvider)
+        }
+    }
+}
+
+
+extension PHFetchResult where ObjectType == PHAssetCollection {
+    var assetCollections: [PHAssetCollection] {
+        var assetCollections = [PHAssetCollection]()
+        enumerateObjects { collection, _, _ in
+            assetCollections.append(collection)
+        }
+        return assetCollections
     }
 }

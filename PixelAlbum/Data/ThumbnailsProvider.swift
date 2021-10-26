@@ -11,28 +11,6 @@ import UIKit
 
 
 final class ThumbnailsProvider {
-    private let assetsProvider: AssetsProvider
-    
-    init(assetsProvider: AssetsProvider) {
-        self.assetsProvider = assetsProvider
-    }
-    
-    func fetchLastPhotoThumbnail(completion: @escaping (UIImage?) -> Void) -> PHImageRequestID? {
-        guard let thumbnailAsset = assetsProvider.lastUserPhoto() else {
-            completion(nil)
-            return nil
-        }
-        return getThumbnailIcon(for: thumbnailAsset, completion: completion)
-    }
-    
-    func fetchThumbnailIcon(for assetCollection: PHAssetCollection, completion: @escaping (UIImage?) -> Void) -> PHImageRequestID? {
-        guard let thumbnailAsset = assetsProvider.keyAsset(in: assetCollection) else {
-            completion(nil)
-            return nil
-        }
-        return getThumbnailIcon(for: thumbnailAsset, completion: completion)
-    }
-    
     func cancelFetch(by id: PHImageRequestID) {
         PHImageManager.default().cancelImageRequest(id)
     }
@@ -53,7 +31,7 @@ final class ThumbnailsProvider {
                                                         resultHandler: { image, _ in completion(image) })
     }
     
-    private func getThumbnailIcon(for asset: PHAsset, completion: @escaping (UIImage?) -> Void) -> PHImageRequestID {
+    func getThumbnailIcon(for asset: PHAsset, completion: @escaping (UIImage?) -> Void) -> PHImageRequestID {
         PHImageManager.default().requestImage(for: asset,
                                                  targetSize: CGSize(width: 42, height: 42),
                                                  contentMode: .aspectFill,
