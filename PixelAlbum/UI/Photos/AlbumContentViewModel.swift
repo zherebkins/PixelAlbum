@@ -8,13 +8,16 @@
 import Foundation
 import Photos
 
-final class AlbumContentViewModel {
+final class AlbumContentViewModel: NSObject {
     @Published var photos = [PhotoCellViewModel]()
     
     private let content: Album
+    
     private let assetsProvider: AssetsProvider
     private let thumbnailsProvider: ThumbnailsProvider
     private let didSelectPhoto: (PHAsset) -> Void
+    
+    private var lastFetchResult: PHFetchResult<PHAsset>?
     
     init(_ album: Album,
          assetsProvider: AssetsProvider,
@@ -38,19 +41,68 @@ final class AlbumContentViewModel {
     }
     
     func onViewLoaded() {
+        let photosAssets = fetchPhotos()
+        showPhotoAssets(photosAssets)
+        PHPhotoLibrary.shared().register(self)
+    }
+    
+    func selectPhoto(at index: Int) {
+        didSelectPhoto(photos[index].asset)
+    }
+    
+    // MARK: - Private helpers
+    private func fetchPhotos() -> [PHAsset] {
         let assets: [PHAsset]
         
         switch content {
         case .allPhotos:
             assets = assetsProvider.allPhotos()
         case .userCollection(let assetCollection):
-            assets = assetsProvider.photoAssets(in: assetCollection)
+            assets = fetchAssets(from: assetCollection)
         }
         
-        self.photos = assets.map { PhotoCellViewModel(asset: $0, thumbnailsProvider: thumbnailsProvider) }
+        return assets
     }
     
-    func selectPhoto(at index: Int) {
-        didSelectPhoto(photos[index].asset)
+    func showPhotoAssets(_ assets: [PHAsset]) {
+        photos = assets.map { PhotoCellViewModel(asset: $0, thumbnailsProvider: thumbnailsProvider) }
+    }
+    
+    private func fetchAssets(from collection: PHAssetCollection) -> [PHAsset] {
+        let assetsResult = PHAsset.fetchAssets(in: collection, options: .photoAssetsFetchOptions)
+        lastFetchResult = assetsResult
+        
+        return assetsResult.assets
+    }
+    
+    private func fetchAllAssets() -> [PHAsset] {
+        let assetsResult = PHAsset.fetchAssets(with: .descendingDatePhotoAssetsFetchOptions)
+        lastFetchResult = assetsResult
+        
+        return assetsResult.assets
+    }
+}
+
+extension AlbumContentViewModel: PHPhotoLibraryChangeObserver {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        guard
+            let lastFetch = lastFetchResult,
+            let changeDetails = changeInstance.changeDetails(for: lastFetch)
+        else { return }
+        
+        
+        let newFetchResult = changeDetails.fetchResultAfterChanges
+        lastFetchResult = newFetchResult
+        showPhotoAssets(newFetchResult.assets)
+    }
+}
+
+extension PHFetchResult where ObjectType == PHAsset {
+    var assets: [PHAsset] {
+        var assets = [PHAsset]()
+        enumerateObjects { asset, _, _ in
+            assets.append(asset)
+        }
+        return assets
     }
 }

@@ -31,12 +31,12 @@ final class AssetsProvider {
     
     // MARK: - Photos
     func allPhotosCount() -> Int {
-        let allPhotosAssets = PHAsset.fetchAssets(with: photoAssetsFetchOptions)
+        let allPhotosAssets = PHAsset.fetchAssets(with: .photoAssetsFetchOptions)
         return allPhotosAssets.count
     }
     
     func allPhotos() -> [PHAsset] {
-        let assetsResult = PHAsset.fetchAssets(with: descendingDatePhotoAssetsFetchOptions)
+        let assetsResult = PHAsset.fetchAssets(with: .descendingDatePhotoAssetsFetchOptions)
         var assets = [PHAsset]()
         assetsResult.enumerateObjects { asset, _, _ in
             assets.append(asset)
@@ -46,19 +46,19 @@ final class AssetsProvider {
     }
     
     func lastUserPhoto() -> PHAsset? {
-        let fetchOptions = descendingDatePhotoAssetsFetchOptions
+        let fetchOptions = PHFetchOptions.descendingDatePhotoAssetsFetchOptions
         fetchOptions.fetchLimit = 1
         let lastPhotoResult = PHAsset.fetchAssets(with: fetchOptions)
         return lastPhotoResult.firstObject
     }
 
     func keyAsset(in collection: PHAssetCollection) -> PHAsset? {
-        let assetResult = PHAsset.fetchKeyAssets(in: collection, options: photoAssetsFetchOptions)
+        let assetResult = PHAsset.fetchKeyAssets(in: collection, options: .photoAssetsFetchOptions)
         return assetResult?.firstObject
     }
     
     func photoAssets(in collection: PHAssetCollection) -> [PHAsset] {
-        let assetsResult = PHAsset.fetchAssets(in: collection, options: photoAssetsFetchOptions)
+        let assetsResult = PHAsset.fetchAssets(in: collection, options: .photoAssetsFetchOptions)
         
         var assets = [PHAsset]()
         assetsResult.enumerateObjects { asset, _, _ in
@@ -82,21 +82,21 @@ final class AssetsProvider {
         
         return assetCollections
     }
-        
-    // MARK: - Fetch options
+}
+
+extension PHFetchOptions {
+    static let photoMediaTypePredicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)")
     
-    var descendingDatePhotoAssetsFetchOptions: PHFetchOptions {
+    static var photoAssetsFetchOptions: PHFetchOptions {
         let fetchOptions = PHFetchOptions()
-        fetchOptions.predicate = photoMediaTypePredicate
+        fetchOptions.predicate = Self.photoMediaTypePredicate
+        return fetchOptions
+    }
+    
+    static var descendingDatePhotoAssetsFetchOptions: PHFetchOptions {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = Self.photoMediaTypePredicate
         fetchOptions.sortDescriptors = [NSSortDescriptor(keyPath: \PHAsset.creationDate, ascending: false)]
         return fetchOptions
     }
-    
-    var photoAssetsFetchOptions: PHFetchOptions {
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.predicate = photoMediaTypePredicate
-        return fetchOptions
-    }
-    
-    private let photoMediaTypePredicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)")
 }
