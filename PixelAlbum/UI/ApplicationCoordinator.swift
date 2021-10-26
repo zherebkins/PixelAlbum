@@ -17,7 +17,12 @@ final class ApplicationCoordinator: NSObject {
     }
     
     private let window: UIWindow
-    private var displayingNavigationController: UINavigationController?
+    
+    private let splitController: UISplitViewController = {
+        let splitController = UISplitViewController()
+        splitController.preferredDisplayMode = .oneBesideSecondary
+        return splitController
+    }()
     
     private let zoomTransitionController = ZoomTransitionController()
     
@@ -27,23 +32,32 @@ final class ApplicationCoordinator: NSObject {
     
     func start() {
         let navigationController = UINavigationController(rootViewController: makeAlbumsListViewController())
-        navigationController.navigationBar.prefersLargeTitles = true
+        navigationController.navigationBar.prefersLargeTitles = UIDevice.current.userInterfaceIdiom == .phone
         
-        window.rootViewController = navigationController
+        splitController.viewControllers = [navigationController]
+        window.rootViewController = splitController
         window.makeKeyAndVisible()
-        displayingNavigationController = navigationController
     }
     
     private func pushAlbumContentScreen(with album: Album) {
-        let albumContentScreen = makeAlbumContentViewController(for: album)
-        displayingNavigationController?.pushViewController(albumContentScreen, animated: true)
+        let albumNavigationController = UINavigationController()
+        albumNavigationController.navigationBar.prefersLargeTitles = UIDevice.current.userInterfaceIdiom == .phone
+
+        let albumContentScreen = makeAlbumContentViewController(
+            for: album,
+            presentPhotoScreenBlock: { [unowned self] photo in
+                self.showPhotoViewer(for: photo, navigationController: albumNavigationController)
+            }
+        )
+        albumNavigationController.setViewControllers([albumContentScreen], animated: false)
+        splitController.showDetailViewController(albumNavigationController, sender: nil)
     }
     
-    private func showPhotoViewer(for asset: PHAsset) {
+    private func showPhotoViewer(for asset: PHAsset, navigationController: UINavigationController) {
         let viewController = makePhotoViewerViewController(for: asset)
         viewController.transitionController = zoomTransitionController
-        displayingNavigationController?.delegate = zoomTransitionController
-        displayingNavigationController?.pushViewController(viewController, animated: true)
+        navigationController.delegate = zoomTransitionController
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     // MARK: - Factory methods
@@ -56,16 +70,16 @@ final class ApplicationCoordinator: NSObject {
         return albumsListVC
     }
     
-    func makeAlbumContentViewController(for album: Album) -> UIViewController {
-        let viewModel = makeAlbumContentViewModel(for: album)
+    func makeAlbumContentViewController(for album: Album, presentPhotoScreenBlock: @escaping (PHAsset) -> Void) -> UIViewController {
+        let viewModel = makeAlbumContentViewModel(for: album, presentPhotoScreenBlock: presentPhotoScreenBlock)
         return AlbumContentViewController.instantiate(with: viewModel)
     }
     
-    func makeAlbumContentViewModel(for album: Album) -> AlbumContentViewModel {
+    func makeAlbumContentViewModel(for album: Album, presentPhotoScreenBlock: @escaping (PHAsset) -> Void) -> AlbumContentViewModel {
         return .init(album,
                      assetsProvider: Services.assetsProvider,
                      thumbnailsProvider: Services.thumbnailProvider,
-                     didSelectPhotoOutput: { [unowned self] in showPhotoViewer(for: $0)})
+                     didSelectPhotoOutput: presentPhotoScreenBlock)
     }
     
     func makePhotoViewerViewModel(for asset: PHAsset) -> PhotoViewerViewModel {

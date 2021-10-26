@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B70498222719D62100C623AF /* PhotosProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70498212719D62100C623AF /* PhotosProvider.swift */; };
 		B70498242719DF7300C623AF /* PhotoCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70498232719DF7300C623AF /* PhotoCollectionCell.swift */; };
 		B706CFAD271886B400F80979 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFAC271886B400F80979 /* AppDelegate.swift */; };
 		B706CFAF271886B400F80979 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706CFAE271886B400F80979 /* SceneDelegate.swift */; };
@@ -33,7 +32,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70498212719D62100C623AF /* PhotosProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosProvider.swift; sourceTree = "<group>"; };
 		B70498232719DF7300C623AF /* PhotoCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionCell.swift; sourceTree = "<group>"; };
 		B706CFA9271886B400F80979 /* PixelAlbum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelAlbum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B706CFAC271886B400F80979 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -123,10 +121,19 @@
 			path = Albums;
 			sourceTree = "<group>";
 		};
+		B70BB45F27260447000BAD44 /* ZoomTransition */ = {
+			isa = PBXGroup;
+			children = (
+				B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */,
+				B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */,
+				B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */,
+			);
+			path = ZoomTransition;
+			sourceTree = "<group>";
+		};
 		B7282E072718D00D00A0A9F8 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				B70498212719D62100C623AF /* PhotosProvider.swift */,
 				B706CFC42718980F00F80979 /* AssetsProvider.swift */,
 				B7DF1DB12718C517001312BA /* ThumbnailsProvider.swift */,
 			);
@@ -153,12 +160,10 @@
 			isa = PBXGroup;
 			children = (
 				B7951970271B330500091D85 /* ApplicationCoordinator.swift */,
-				B7E92DD427209BA5008D31AC /* ZoomAnimator.swift */,
-				B70BB45B2725539C000BAD44 /* ZoomPresentationDissmissDriver.swift */,
-				B7E92DD627209E14008D31AC /* ZoomTransitionController.swift */,
 				B706CFC327188EC300F80979 /* Albums */,
 				B7DF1DB42718C7A7001312BA /* Photos */,
 				B7951979271C45C800091D85 /* PhotoViewer */,
+				B70BB45F27260447000BAD44 /* ZoomTransition */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -255,7 +260,6 @@
 				B795197B271C45E400091D85 /* PhotoViewerViewController.swift in Sources */,
 				B7951974271B482200091D85 /* Album.swift in Sources */,
 				B7DF1DB62718C7D7001312BA /* AlbumContentViewController.swift in Sources */,
-				B70498222719D62100C623AF /* PhotosProvider.swift in Sources */,
 				B70498242719DF7300C623AF /* PhotoCollectionCell.swift in Sources */,
 				B7DF1DB22718C517001312BA /* ThumbnailsProvider.swift in Sources */,
 				B706CFC72718A52200F80979 /* AlbumsListViewModel.swift in Sources */,

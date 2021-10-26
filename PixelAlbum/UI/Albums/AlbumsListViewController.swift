@@ -30,6 +30,14 @@ final class AlbumsListViewController: UIViewController {
         viewModel.onViewLoaded()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if let selectedRow = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selectedRow, animated: true)
+        }
+    }
+    
     private func configureBindings() {
         viewModel.$albums
             .sink { [unowned self] albums in
@@ -58,7 +66,6 @@ final class AlbumsListViewController: UIViewController {
 // MARK: - UITableViewDelegate
 extension AlbumsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         viewModel.didSelectAlbum(at: indexPath.row)
     }
 }
